@@ -349,6 +349,20 @@
         -- Then for monitoring logic we will create a service named like let's say Analytics service that talks with Notification
             server, Messaging queues, 3rd party systems and Notification Log DB
 
+            {
+                Like Analytics will talk to notification server to determine how many notifications are sent and created in a day
+
+                It talks with messaging queues to determine how many notifications go to retry 
+
+                It talks to notification log to get logs of notifications to see when and where our system got faulty
+
+                And it talks to 3rd party system to determine how many Email, SMS notifications are sent 
+
+                It also determines like let's say our Email notification 3rd party service was failing too much so we can partner
+                up with another 3rd party which provides this service and works fine so this is how analytics helps
+                
+            }
+
 
 
         
