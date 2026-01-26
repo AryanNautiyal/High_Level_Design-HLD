@@ -236,7 +236,121 @@
         payment), user cart (might give notifications like complete your order by paying for the items type) or can be of discount 
         also, etc 
 
-        These services can also be cron jobs 
+        These services can also be cron jobs (Cron jobs are scheduled APIs like we can schedule a method to be called everyday at 
+        11am)
+
+        So now our notification server will communicate with 3rd party systems to send notifications to the people 
+
+        So simply our cron jobs or microservices will communicate with notification server which will then communicate with 3rd
+        party systems
+
+    
+    *** Flow ***
+
+        1 -- Any service (microservice, cron jobs) trigger notifications and send it to our notification server
+
+        2 -- The notification server has APIs that builds up the payload for 3rd party services (APIs) to send the requested
+                notifications
+
+        3 -- Third party services actually send the notifications to the client 
+
+    
+    *** Improvements in Basic Design of our Notification System ***
+
+        -- Current problems in our basic design are :
+
+                (-) SPOF is there as single Notification Server 
+
+                (-) Hard to scale 
+
+                (-) Retry mechanism missing (as in case a notification is not sent to client due to server crash so retry mechanism
+                    should be there)
+
+                (-) Tight coupling (synchronous) 
+
+                    {So like if our service1 sends request to notification server for IOS notification then server will do that 
+                    work but at that time also if our service2 also sends request to notification server then server will put it on
+                    hold as APNs will send response 200 then server will know that notification is successfully sent hence 
+                    synchronous or tightly coupled and this leads to our system being slow}
+
+            # So we will assume that microservices to notification server all the things are done (like scaling and all) as our main
+              task is to design notification server so assume this 
+
+        -- So we will introduce cache and DB in our notification system and between notification server and 3rd party systems we 
+            will introduce messaging queues
+
+        -- So our notification server will be publisher which will publish all the notifications in their specific queues like 
+            in SMS queues SMS notifications will be there later given to Twilio, etc and same like this for others 
+
+        -- All the 3rd party systems are now subscribers with each one having it's own messaging queue
+
+        -- So we will also introduce workers which will give notifications from messaging queue to 3rd party systems whenever they
+            are free (cannot make 3rd party systems as workers as we don't have internal access to their codes and all) 
+            {Solved tight coupling problem}
+
+        -- Messaging queues removed dependency between 3rd party APIs and our notification server and service is now asynchronous 
+
+        -- So now we will scale our notification server so we will horizontally scale our notification server which will solve our
+            SPOF problem
+
+        -- So we are assuming our Notification servers, cache and DB are internally scaled horizontally as our main focus is 
+            notification system
+
+        -- So now service tells notification server to send notification then our notification server picks template for 
+            notification from DB and creates notification then sends it to messaging queue then workers pick up the notification 
+            then send it to 3rd party system to send to user 
+
+        -- So what if our worker picked up notification from messaging queue and then gave it to 3rd party system but due to some
+            reason there was some internal error due to which notification wasn't sent to the user to retry mechanism will be 
+            needed here as notification is removed from the queue so the notification is lost 
+
+        -- So our notification system should be reliable (no notification should be lost)
+
+        -- For now we have created soft real time system for our notification system as notification server puts the notification 
+            in messaging queue which is later sent according to server
+
+        -- So to make this notification system reliable we use worker to send the data back to the messaging queue if in case
+            some error occurs so that afterwards that notification is again sent to the 3rd party system by worker 
+
+        -- So now our retry mechanism is implemented
+
+
+        ** What all is stored and where **
+
+            DB & Cache : user information, notification templates, etc 
+
+            Messaging queue : stores notifications 
+
+    
+    *** Final Improvements ***
+
+        -- Improvements that can be done in our current updated design :
+
+                -- Notification templates
+
+                -- Notification settings on user level : user can turn on/off a particular type of notification 
+
+                -- Rate Limiting
+
+                -- API authentication (so that noone can use our API except our services)
+
+                -- Monitoring Logic (fetching notification history from DB but need to store notifications also)
+
+                    {Can be used to determine like how many SMS notifications, etc are done in a day, how many retry notifications
+                     are there, latency, etc}
+
+                -- Notification Log  
+
+
+        -- So in notification server we will implement the rate limiting and API authentication to protect our server 
+
+        -- Then in our workers we will give each worker it's own DB to store Notification Log 
+
+        -- Then for monitoring logic we will create a service named like let's say Analytics service that talks with Notification
+            server, Messaging queues, 3rd party systems and Notification Log DB
+
+
+
         
 
 
