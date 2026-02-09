@@ -175,6 +175,13 @@
 
                     So even if we take 256 virtual nodes then also we aren't resharding the whole DB so work is saved
 
+                    Locations are determined by like if we use IP hashing then adding some suffix like #1 or something to make 
+                    unqiue identifiers of it
+
+                    Although it doesn't guarantee that the virtual nodes will be located far but it isn't a problem in real world
+                    as even if they are they would just seen as 1 virtual nodes responsible for storing data only (in real world
+                    many virtual nodes are made)
+
                 }
 
 
