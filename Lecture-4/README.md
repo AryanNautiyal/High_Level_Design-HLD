@@ -114,7 +114,7 @@
         
         ## Virtual Nodes ##
 
-            -- Virtual Nodes are replicas of Original Nodes 
+            -- Virtual Nodes are logical replicas of Original Nodes 
 
             -- Like in Master Slave Architecture, the master DB has it's replicas called as slave DB so hence the slave DBs are 
                 here called as virtual nodes
@@ -157,6 +157,25 @@
 
             -- So without virtual nodes there were 2 limitations of consistent hashing : 1. uneven distribution of keys
                                                                                          2. celebrity problem (hotspot key problem)
+
+            -- Virtual nodes are there only to distribute data evenly among all the DBs (they do not physically exist they just
+                like show same DB at different locations in hash ring so that data is smoothly distributed)
+
+                {
+
+                    Virtual Nodes are logical shadows used for balancing.
+
+                    Cannot use real nodes as there are chances that they might end up close to other replicas so high chances
+                    of uneven data distribution
+
+                    If the Concrete DB (Physical Server) fails, all the data it was responsible for—across all its 256 "logical" VNodes—becomes unavailable on that specific machine.
+
+                    So if one DB fails then all virtual nodes and all are removed from hash ring and then data from it's replica is
+                    hashed again and moved and replicas are then removed
+
+                    So even if we take 256 virtual nodes then also we aren't resharding the whole DB so work is saved
+
+                }
 
 
 

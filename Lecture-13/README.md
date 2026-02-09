@@ -474,9 +474,11 @@
                         Like if we divide a video of 100GB to chunks of 10GBs each and compress each to 50MB and each chunk 
                         represents only 10 sec of the whole video so the user will need a bitrate of 
 
-                            Bitrate = (Size of 1 compressed chunk) / Time = 50MB / 10 = 5 MBps = 5 * 8 = 40 Mbps
+                            Bitrate = (Average Size of compressed chunk) / Time = 50MB / 10 = 5 MBps = 5 * 8 = 40 Mbps
                         
                         to watch this video smoothly
+
+                        (We also take a peak bitrate to see the bitrate of the largest chunk out of all the chunks requires)
 
                 }
 
@@ -555,7 +557,7 @@
 
     -- The diagrams at the end of the pdf are the final design of the system for both usecases or functional requirement
 
-    
+
 
 
 
