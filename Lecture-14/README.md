@@ -622,7 +622,7 @@
 
     -- So internally our MongoDB, Cassandra DB, Dynamo DB uses these things but they have more complex process there in them 
 
-    -- Internally they have Bloom filters, Memory cache, SS Tables (Sorted Set Tables) 
+    -- Internally they have Bloom filters, Memory cache, SS Tables (Sorted String Tables) 
 
     {
 
@@ -699,6 +699,39 @@
                 note" file with a "giant encyclopedia" file every time, the CPU would be working way too hard for very little gain.
 
     }
+
+
+*** Extra : Simple Flow ***
+
+        -- Unlike a B+ Tree, which goes directly to a specific spot on the hard disk to update data (In-place update), the LSM Tree 
+            uses a multi-layered approach :
+
+            
+                Step A: The MemTable (In-Memory)
+
+                    -- When you write data (like a new car listing for Mercauto), it is first written to a MemTable in your RAM.
+
+                    -- Writing to RAM is incredibly fast because there is no mechanical movement or "disk seeking."
+
+                    -- The MemTable keeps the data sorted (usually using a Skip List or a balanced tree).
+
+                Step B: The SSTable (On-Disk)
+
+                    -- Once the MemTable gets full, it is "flushed" to the hard disk as a single, large block of data called an 
+                        SSTable (Sorted String Table).
+
+                    -- Crucially, this SSTable is Immutable (it never changes).
+
+                    -- If you update a record, the LSM Tree doesn't find the old version to change it; it simply writes a new 
+                        version in a new SSTable.
+
+                Step C: Compaction (The Cleanup)
+
+                    -- Over time, you end up with many SSTable files on your disk. To keep things fast, the DBMS runs a background 
+                        process called Compaction.
+
+                    -- It merges multiple SSTables into one, keeping only the most recent version of each record and deleting the   
+                        old ones.
 
 
 
