@@ -709,7 +709,7 @@
             
                 Step A: The MemTable (In-Memory)
 
-                    -- When you write data (like a new car listing for Mercauto), it is first written to a MemTable in your RAM.
+                    -- When you write data (like a new car listing), it is first written to a MemTable in your RAM.
 
                     -- Writing to RAM is incredibly fast because there is no mechanical movement or "disk seeking."
 
@@ -722,7 +722,7 @@
 
                     -- Crucially, this SSTable is Immutable (it never changes).
 
-                    -- If you update a record, the LSM Tree doesn't find the old version to change it; it simply writes a new 
+                    -- If you update a record, the LSM Tree doesn't find the old version to change it, it simply writes a new 
                         version in a new SSTable.
 
                 Step C: Compaction (The Cleanup)
