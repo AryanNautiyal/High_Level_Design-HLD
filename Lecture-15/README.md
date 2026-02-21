@@ -310,6 +310,10 @@
     -- In NoSQL DB : MongoDB uses B+ Trees whereas Cassandra uses LSM Tree (A Log-Structured Merge-tree (LSM tree) is a disk-based 
         data structure designed for high-write-throughput applications)
 
+        {
+            LSM uses MemTable, SSTable and Compaction so that's why write throughput is high
+        }
+
 
 
 
